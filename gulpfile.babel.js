@@ -29,6 +29,43 @@ var manifest = {
 
   firefox: {
     "applications": {
+      "gecko": {
+        "id": "kan@nlab.extension",
+        "strict_min_version": "48.0"
+      }
+    },
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "kan@nlab.extension",
+        "strict_min_version": "48.0"
+      }
+    }
+  },
+
+  edge: {
+    "background": {
+      "scripts": [
+        "scripts/background.js"
+      ],
+      "persistent": false
+    }
+  },
+
+  chrome: {
+    "background": {
+      "scripts": [
+        "scripts/background.js"
+      ],
+      "persistent": true
+    }
+  },
+
+  opera: {
+    "background": {
+      "scripts": [
+        "scripts/background.js"
+      ],
+      "persistent": true
     }
   }
 }
@@ -86,6 +123,21 @@ gulp.task("manifest", () => {
       fileName: "manifest.json",
       jsonSpace: " ".repeat(4),
       endObj: manifest.firefox
+    })))
+    .pipe(gulpif(target === "edge", $.mergeJson({
+      fileName: "manifest.json",
+      jsonSpace: " ".repeat(4),
+      endObj: manifest.edge
+    })))
+    .pipe(gulpif(target === "chrome", $.mergeJson({
+      fileName: "manifest.json",
+      jsonSpace: " ".repeat(4),
+      endObj: manifest.chrome
+    })))
+    .pipe(gulpif(target === "opera", $.mergeJson({
+      fileName: "manifest.json",
+      jsonSpace: " ".repeat(4),
+      endObj: manifest.opera
     })))
     .pipe(gulp.dest(`./build/${target}`))
 });
@@ -155,6 +207,18 @@ function buildJS(target) {
     })))
     .pipe(gulp.dest(`build/${target}/scripts`));
   });
+
+  // Add polyfills as a separate task (no browserify needed)
+  const polyfillsTask = gulp.src('src/scripts/utils/polyfills.js')
+    .pipe(gulpif(production, $.uglify({
+      "mangle": false,
+      "output": {
+        "ascii_only": true
+      }
+    })))
+    .pipe(gulp.dest(`build/${target}/scripts`));
+
+  tasks.push(polyfillsTask);
 
   return merge.apply(null, tasks);
 }

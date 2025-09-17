@@ -1,6 +1,5 @@
 import tippy from 'tippy.js';
 import $ from 'jquery';
-import 'simpler-sidebar';
 import ScrollProgress from 'scrollprogress'
 import ScrollSpy from './scrollspy'
 
