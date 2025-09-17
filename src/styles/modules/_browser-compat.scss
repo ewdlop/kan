@@ -1,0 +1,139 @@
+/* Browser-specific CSS fixes and enhancements */
+
+/* Firefox-specific styles */
+@-moz-document url-prefix() {
+  .kan-extension {
+    /* Firefox-specific font rendering adjustments */
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Firefox scrollbar styling */
+  .kan-scrollable {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f0f0f0;
+  }
+}
+
+/* Chrome/Edge/Opera-specific styles */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  .kan-extension {
+    /* Webkit-specific font smoothing */
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* Webkit scrollbar styling */
+  .kan-scrollable::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .kan-scrollable::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+  
+  .kan-scrollable::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
+  .kan-scrollable::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
+}
+
+/* Edge-specific styles */
+@supports (-ms-ime-align: auto) {
+  .kan-extension {
+    /* Edge-specific adjustments */
+    font-feature-settings: normal;
+  }
+}
+
+/* Safari-specific styles */
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    .kan-extension {
+      /* Safari-specific font rendering */
+      -webkit-font-smoothing: subpixel-antialiased;
+    }
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .kan-extension .kan-icon {
+    /* Use higher resolution icons on retina displays */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark mode support across browsers */
+@media (prefers-color-scheme: dark) {
+  .kan-extension {
+    /* Dark mode color adjustments */
+    filter: invert(0.95) hue-rotate(180deg);
+  }
+  
+  .kan-extension img,
+  .kan-extension svg {
+    /* Preserve image colors in dark mode */
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .kan-extension * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Browser-specific button styling fixes */
+.kan-extension button {
+  /* Reset browser-specific button styles */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Consistent button styling across browsers */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.kan-extension button:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.kan-extension button:focus {
+  outline: 2px solid #4990E2;
+  outline-offset: 2px;
+}
+
+/* Cross-browser input styling */
+.kan-extension input[type="text"],
+.kan-extension input[type="search"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.kan-extension input[type="text"]:focus,
+.kan-extension input[type="search"]:focus {
+  outline: 2px solid #4990E2;
+  outline-offset: 2px;
+  border-color: #4990E2;
+}
