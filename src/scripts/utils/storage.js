@@ -50,4 +50,15 @@ function getStorage() {
   }
 }
 
-module.exports = getStorage();
+// Cross-browser storage detection and setup
+const storage = getStorage();
+
+// Add browser detection for storage capabilities
+storage.capabilities = {
+  hasExtensionStorage: !!(ext.storage && (ext.storage.sync || ext.storage.local)),
+  hasLocalStorage: typeof localStorage !== 'undefined',
+  browser: ext.getBrowser ? ext.getBrowser() : 'unknown',
+  manifestVersion: ext.getManifestVersion ? ext.getManifestVersion() : 2
+};
+
+module.exports = storage;

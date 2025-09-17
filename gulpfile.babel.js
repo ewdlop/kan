@@ -49,6 +49,24 @@ var manifest = {
       ],
       "persistent": false
     }
+  },
+
+  chrome: {
+    "background": {
+      "scripts": [
+        "scripts/background.js"
+      ],
+      "persistent": true
+    }
+  },
+
+  opera: {
+    "background": {
+      "scripts": [
+        "scripts/background.js"
+      ],
+      "persistent": true
+    }
   }
 }
 
@@ -110,6 +128,16 @@ gulp.task("manifest", () => {
       fileName: "manifest.json",
       jsonSpace: " ".repeat(4),
       endObj: manifest.edge
+    })))
+    .pipe(gulpif(target === "chrome", $.mergeJson({
+      fileName: "manifest.json",
+      jsonSpace: " ".repeat(4),
+      endObj: manifest.chrome
+    })))
+    .pipe(gulpif(target === "opera", $.mergeJson({
+      fileName: "manifest.json",
+      jsonSpace: " ".repeat(4),
+      endObj: manifest.opera
     })))
     .pipe(gulp.dest(`./build/${target}`))
 });

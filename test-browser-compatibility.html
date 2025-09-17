@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kan Browser Compatibility Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-passed {
+            color: #28a745;
+        }
+        .test-failed {
+            color: #dc3545;
+        }
+        .test-warning {
+            color: #ffc107;
+        }
+        .browser-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .feature-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Kan Browser Compatibility Test</h1>
+    
+    <div class="browser-info">
+        <h2>Browser Information</h2>
+        <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+        <p><strong>Detected Browser:</strong> <span id="detectedBrowser"></span></p>
+        <p><strong>Extension API:</strong> <span id="extensionAPI"></span></p>
+    </div>
+
+    <div class="test-container">
+        <h2>Quick Actions</h2>
+        <button onclick="runAllTests()">🔄 Run All Tests</button>
+        <button onclick="showBrowserFeatures()">📋 Show Browser Features</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Results</h2>
+        <div id="testResults">
+            <p>Click "Run All Tests" to start testing browser compatibility...</p>
+        </div>
+    </div>
+
+    <div class="feature-grid" id="featureGrid" style="display: none;">
+        <div class="feature-card">
+            <h3>Extension API Features</h3>
+            <ul class="feature-list" id="extensionFeatures"></ul>
+        </div>
+        <div class="feature-card">
+            <h3>JavaScript Features</h3>
+            <ul class="feature-list" id="jsFeatures"></ul>
+        </div>
+        <div class="feature-card">
+            <h3>DOM Features</h3>
+            <ul class="feature-list" id="domFeatures"></ul>
+        </div>
+        <div class="feature-card">
+            <h3>CSS Features</h3>
+            <ul class="feature-list" id="cssFeatures"></ul>
+        </div>
+    </div>
+
+    <!-- Include polyfills and test scripts -->
+    <script src="../src/scripts/utils/polyfills.js"></script>
+    <script src="../src/scripts/utils/feature-detection.js"></script>
+    <script src="../src/scripts/utils/browser-test.js"></script>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBrowserInfo();
+        });
+
+        function updateBrowserInfo() {
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            
+            // Wait for polyfills to load
+            setTimeout(function() {
+                const browser = window.KanBrowser || { name: 'unknown' };
+                document.getElementById('detectedBrowser').textContent = browser.name || 'unknown';
+                
+                const hasExtensionAPI = typeof chrome !== 'undefined' || typeof browser !== 'undefined';
+                document.getElementById('extensionAPI').textContent = hasExtensionAPI ? 'Available' : 'Not Available';
+            }, 100);
+        }
+
+        function runAllTests() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<p>⏳ Running tests...</p>';
+
+            setTimeout(function() {
+                if (typeof window.KanBrowserTest !== 'undefined') {
+                    const testResults = window.KanBrowserTest.runAllTests();
+                    displayTestResults(testResults);
+                } else {
+                    resultsDiv.innerHTML = '<p class="test-failed">❌ Test framework not loaded</p>';
+                }
+            }, 500);
+        }
+
+        function displayTestResults(results) {
+            const resultsDiv = document.getElementById('testResults');
+            let html = '';
+
+            html += `<h3>Overall Results</h3>`;
+            html += `<p><strong>Pass Rate:</strong> ${results.passRate}%</p>`;
+            html += `<p><strong>Tests Passed:</strong> <span class="test-passed">${results.results.passed}</span></p>`;
+            html += `<p><strong>Tests Failed:</strong> <span class="test-failed">${results.results.failed}</span></p>`;
+
+            html += `<h3>Detailed Results</h3>`;
+            results.results.tests.forEach(test => {
+                const statusClass = test.passed ? 'test-passed' : 'test-failed';
+                const icon = test.passed ? '✅' : '❌';
+                html += `<div class="${statusClass}">`;
+                html += `<strong>${icon} ${test.name}:</strong> ${test.details}`;
+                html += `</div>`;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function showBrowserFeatures() {
+            const featureGrid = document.getElementById('featureGrid');
+            
+            if (typeof window.KanFeatures !== 'undefined') {
+                const features = window.KanFeatures;
+                
+                // Extension features
+                updateFeatureList('extensionFeatures', features.extension);
+                
+                // JavaScript features
+                updateFeatureList('jsFeatures', features.javascript);
+                
+                // DOM features
+                updateFeatureList('domFeatures', features.dom);
+                
+                // CSS features (test some common ones)
+                const cssFeatures = {
+                    'Flexbox': CSS.supports('display', 'flex'),
+                    'Grid': CSS.supports('display', 'grid'),
+                    'Custom Properties': CSS.supports('--test', 'value'),
+                    'Filters': CSS.supports('filter', 'invert(1)'),
+                    'Transforms': CSS.supports('transform', 'rotate(45deg)')
+                };
+                updateFeatureList('cssFeatures', cssFeatures);
+                
+                featureGrid.style.display = 'block';
+            } else {
+                alert('Feature detection not available. Please wait for scripts to load.');
+            }
+        }
+
+        function updateFeatureList(elementId, features) {
+            const listElement = document.getElementById(elementId);
+            let html = '';
+            
+            for (const [feature, supported] of Object.entries(features)) {
+                const icon = supported ? '✅' : '❌';
+                const className = supported ? 'test-passed' : 'test-failed';
+                html += `<li class="${className}">${icon} ${feature}</li>`;
+            }
+            
+            listElement.innerHTML = html;
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '<p>Click "Run All Tests" to start testing browser compatibility...</p>';
+            document.getElementById('featureGrid').style.display = 'none';
+        }
+
+        // Test CSS Grid support and add fallback
+        if (!CSS.supports('display', 'grid')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                .feature-grid {
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+                .feature-card {
+                    flex: 1 1 300px;
+                    margin: 10px;
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+    </script>
+</body>
+</html>
