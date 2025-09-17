@@ -8,7 +8,7 @@ Kan is a browser *extension* for nLab that does 2 simple things:
 
 ![demo](https://user-images.githubusercontent.com/5866348/32987959-4407361a-ccae-11e7-805c-2c955f46822c.gif)
 
-## Browser Support
+## Browser Support(RAG said so)
 
 Kan supports all major modern browsers with comprehensive cross-browser compatibility:
 
